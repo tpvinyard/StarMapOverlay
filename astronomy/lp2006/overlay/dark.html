@@ -14,7 +14,7 @@
     <script type="text/javascript" src="ExtDraggableObject.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAl7z7WaDJwjwvBjibTRwfoNtFfU1iI-Zo"></script>
     <script>
-var map, overlay;
+var map, overlay, infoWindow;
 var initialOpacity = 0.5;
 var OPACITY_MAX_PIXELS = 57; // Width of opacity control image
 
@@ -55,9 +55,9 @@ var OPACITY_MAX_PIXELS = 57; // Width of opacity control image
 
 function initialize() {
   var mapOptions = {
-    zoom: 3,
+    zoom: 4,
     maxZoom: 17,
-    center: new google.maps.LatLng(5, 0),
+    center: new google.maps.LatLng(39.8283, 268.5795),
     scaleControl: true,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
@@ -73,6 +73,28 @@ function initialize() {
      5: [[0, 31], [5, 23]],
      6: [[0, 63], [11,47]]
   };
+
+  infoWindow = new google.maps.InfoWindow;
+
+  if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(function(position) {
+    var pos = {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude
+    };
+
+      infoWindow.setPosition(pos);
+      infoWindow.setContent('Location found.');
+      infoWindow.open(map);
+      map.setCenter(pos);
+    }, function() {
+      handleLocationError(true, infoWindow, map.getCenter());
+    });
+  } else {
+    // Browser doesn't support Geolocation
+    handleLocationError(false, infoWindow, map.getCenter());
+  }
+  
 
   var zoomLevel = 1;
   var first = 1;
